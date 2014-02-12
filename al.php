@@ -11,11 +11,6 @@ spl_autoload_register('defSplAutoLoadHandler');
  * @return boolean
  */
 function defSplAutoLoadHandler($class_name) {
-    if (0 === strpos($class_name, 'GetOptionKit')) {
-        $file = SYS_ROOT . 'libs' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class_name) . '.php';
-        include ($file);
-    } else {
-        $file = SYS_ROOT . str_replace('\\', DIRECTORY_SEPARATOR, $class_name) . '.php';
-        include ($file);
-    }
+    $file = SYS_ROOT . str_replace('\\', DIRECTORY_SEPARATOR, $class_name) . '.php';
+    include ($file);
 }

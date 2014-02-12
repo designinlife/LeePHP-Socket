@@ -9,8 +9,8 @@ namespace LeePHP\Entity;
  * @copyright (c) 2013, Lei Lee
  */
 class HTTPOption {
-    private $_timeout         = 120;
-    private $_connectTimeout  = 60;
+    private $_timeout         = 30;
+    private $_connectTimeout  = 30;
     private $_dnsCacheTimeout = 3600;
     private $_userAgent       = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0';
     private $_headers         = array();
@@ -39,7 +39,8 @@ class HTTPOption {
             'connecttimeout'    => $this->_connectTimeout,
             'dns_cache_timeout' => $this->_dnsCacheTimeout,
             'useragent'         => $this->_userAgent,
-            'headers'           => $this->_headers
+            'headers'           => $this->_headers,
+            'redirect'          => 0
         );
 
         if ($this->_cookies) {
