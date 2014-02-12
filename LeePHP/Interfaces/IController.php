@@ -2,6 +2,7 @@
 namespace LeePHP\Interfaces;
 
 use LeePHP\Interfaces\IDisposable;
+use LeePHP\Interfaces\ISwoole;
 
 /**
  * Application 控制器接口。
@@ -12,9 +13,13 @@ use LeePHP\Interfaces\IDisposable;
  */
 interface IController extends IDisposable {
     /**
-     * 预初始化事件。(注: 此方法在 initialize() 之前调用)
+     * 构造函数。
+     * 
+     * @param Bootstrap $ctx 指定上下文对象。
+     * @param ISwoole $serv  指定 Swoole 服务实例。
+     * @param int $fd        指定客户端文件描述符。
      */
-    function onPreInitialize();
+    function __construct($ctx, $serv, $fd);
 
     /**
      * 初始化事件。

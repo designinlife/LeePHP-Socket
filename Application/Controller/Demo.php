@@ -1,15 +1,14 @@
 <?php
 namespace Application\Controller;
 
-use LeePHP\Base\WebBase;
+use LeePHP\Base\ControllerBase;
 
-class Demo extends WebBase {
+class Demo extends ControllerBase {
 
     function start() {
-        $this->ctx->template->setCacheEnable(true);
-        $this->ctx->template->setAutoReload(true);
-        $this->ctx->template->assign('name', 'Li Lei');
-        $this->ctx->template->display('demo.tpl');
+        $this->send(array(
+            'msg' => '我的个神啦!~'
+        ));
     }
 
     function terminate($execute_ms) {

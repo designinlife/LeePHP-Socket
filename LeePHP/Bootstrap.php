@@ -38,6 +38,13 @@ class Bootstrap {
     private $_errorLevel = 32759;
 
     /**
+     * 控制器名称空间。
+     *
+     * @var string
+     */
+    private $_controll_ns = '\Application\Controller';
+
+    /**
      * DB 自动提交。(仅适用于 InnoDB 引擎)
      *
      * @var boolean
@@ -150,6 +157,13 @@ class Bootstrap {
     public $cfgs = array();
 
     /**
+     * 系统命令配置列表。
+     *
+     * @var array
+     */
+    public $cmds;
+
+    /**
      * 当前进程 PID。
      *
      * @var int
@@ -184,7 +198,17 @@ class Bootstrap {
      * @param array $def_cnf 指定系统全局配置参数。
      */
     function dispatch(&$argv, &$def_cnf) {
+        if (0 != strcmp(PHP_SAPI, 'cli')) {
+            echo '此脚本仅支持 cli 模式运行!';
+            exit(0);
+        }
+
+        // 载入命令行参数
         $this->argv = $argv;
+
+        include (SYS_CONF . 'cmd.inc.php');
+
+        $this->cmds = $g_cmd_hash;
 
         $this->timestamp = time();
         $this->_start_ms = microtime(true);
@@ -256,6 +280,26 @@ class Bootstrap {
      */
     function defErrorHandler($errno, $errstr, $errfile, $errline) {
         throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
+    }
+
+    /**
+     * 获取控制器名称空间。
+     * 
+     * @return string
+     */
+    function getControllerNs() {
+        return $this->_controll_ns;
+    }
+
+    /**
+     * 设置控制器名称空间。
+     * 
+     * @param string $value
+     * @return \LeePHP\Bootstrap
+     */
+    function setControllerNs($value) {
+        $this->_controll_ns = $value;
+        return $this;
     }
 
     /**

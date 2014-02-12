@@ -19,4 +19,5 @@ $dis->setTimeZone('Asia/Shanghai')
     ->setListener('0.0.0.0', 9501)
     ->setDbAutoCommit(true)
     ->setDbPersistent(false)
+    ->setControllerNs('Application\Controller')
     ->dispatch($argv, $g_conf);

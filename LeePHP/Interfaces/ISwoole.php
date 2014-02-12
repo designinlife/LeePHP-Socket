@@ -72,4 +72,20 @@ interface ISwoole {
      * @param callable $callback
      */
     function on($event, $callback);
+    
+    /**
+     * 获取连接信息。
+     * 
+     * @param int $fd
+     * @return array|boolean
+     */
+    function connection_info($fd);
+    
+    /**
+     * 获取客户端列表。
+     * 
+     * @param int $start_fd
+     * @param int $page_size
+     */
+    function connection_list($start_fd = 0, $page_size = 10);
 }
