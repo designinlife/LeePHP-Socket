@@ -11,6 +11,13 @@ class Demo extends ControllerBase {
         ));
     }
 
+    function hasParams($data) {
+        $this->send(array(
+            'msg'  => '收到数据了。',
+            'data' => $data
+        ));
+    }
+
     function terminate($execute_ms) {
         echo '<br/>耗费时间: ', $execute_ms;
     }

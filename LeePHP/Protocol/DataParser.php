@@ -12,6 +12,30 @@ use LeePHP\Utility\Encoder;
  */
 class DataParser {
     /**
+     * 构建标准输出数据结构。
+     * 
+     * @param int $ci
+     * @param int $ct
+     * @param array $data
+     * @param int $errno
+     * @param string $errstr
+     * @return string
+     */
+    static function std($ci, $ct, $data, $errno = 0, $errstr = NULL){
+        $d = array(
+            's'  => array(
+                'errno' => $errno,
+                'err'   => $errstr
+            ),
+            'm'  => $data,
+            'ci' => $ci,
+            'ct' => $ct
+        );
+        
+        return self::encode($d);
+    }
+    
+    /**
      * 将发送回客户端的数据打包。
      * 
      * @param array $data_out

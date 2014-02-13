@@ -182,10 +182,10 @@ class Console {
             return false;
 
         $doc   = array();
-        $doc[] = date('Y-m-d H:i:s');
+        $doc[] = date('Y-m-d H:i:s') . ' ';
         if (0 < self::$ctx->pid)
             $doc[] = '[#' . self::$ctx->pid . ']';
-        $doc[] = self::$types[$type];
+        $doc[] = self::$types[$type] . ' ';
 
         foreach ($args as $v) {
             if (is_array($v))
@@ -196,7 +196,7 @@ class Console {
                 $doc[] = strval($v);
         }
 
-        $s = implode(' ', $doc);
+        $s = implode('', $doc);
 
         if (PHP_OS == 'Linux' && C::L_ERROR == $type)
             echo self::colour($s, 'light_red'), PHP_EOL;
