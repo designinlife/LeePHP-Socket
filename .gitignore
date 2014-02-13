@@ -219,3 +219,5 @@ pip-log.txt
 nbproject/
 test*.php
 TroubledKit/
+build.xml
+build-attrs.xml
