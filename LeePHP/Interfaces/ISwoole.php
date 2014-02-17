@@ -9,7 +9,6 @@ namespace LeePHP\Interfaces;
  * @copyright (c) 2013, Lei Lee
  */
 interface ISwoole {
-
     /**
      * 设置运行时参数。
      * 
@@ -32,6 +31,20 @@ interface ISwoole {
      * @param int $interval
      */
     function addtimer($interval);
+    
+    /**
+     * 添加异步任务。
+     * 
+     * @param string $data
+     */
+    function task($data);
+    
+    /**
+     * 此函数用于在task_worker进程中通知worker进程，投递的任务已完成。
+     * 
+     * @param string $data
+     */
+    function finish($data);
 
     /**
      * 启动服务。

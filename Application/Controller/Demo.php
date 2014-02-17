@@ -9,6 +9,11 @@ class Demo extends ControllerBase {
         $this->send(array(
             'msg' => '我的个神啦!~'
         ));
+        
+        // $this->broadcast(array('msg' => '这是一个广播消息。'), 1, 1002);
+        $task  = new \Application\Task\AsyncTask();
+        
+        $this->addTask($task);
     }
 
     function hasParams($data) {

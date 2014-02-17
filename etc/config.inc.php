@@ -23,6 +23,7 @@ $g_conf = array(
         'poll_thread_num'   => 4,
         'writer_num'        => 2,
         'worker_num'        => 4,
+        'task_worker_num'   => 1,
         'backlog'           => 128,
         'open_cpu_affinity' => 1,
         'open_tcp_nodelay'  => 1,

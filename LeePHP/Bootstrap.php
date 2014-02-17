@@ -59,18 +59,25 @@ class Bootstrap {
     private $_dbPersistent = false;
 
     /**
-     * 监听主机地址。
+     * 主要监听主机地址。
      *
      * @var string
      */
     private $_host = '0.0.0.0';
 
     /**
-     * 监听端口。
+     * 主要监听端口。
      *
      * @var int
      */
     private $_port = 9501;
+
+    /**
+     * 附加监听地址及端口列表。
+     *
+     * @var array
+     */
+    private $_listeners = array();
 
     /**
      * 日志级别。
@@ -249,6 +256,12 @@ class Bootstrap {
         $this->_ci->on('timer', array($this->_as, 'onTimer'));
         $this->_ci->on('task', array($this->_as, 'onTask'));
         $this->_ci->on('finish', array($this->_as, 'onFinish'));
+
+        if (!empty($this->_listeners)) {
+            foreach ($this->_listeners as $v)
+                $this->_ci->addlistener($v[0], $v[1], SWOOLE_SOCK_TCP);
+        }
+
         $this->_ci->start();
     }
 
@@ -414,6 +427,21 @@ class Bootstrap {
     function setListener($host, $port) {
         $this->_host = $host;
         $this->_port = $port;
+        return $this;
+    }
+
+    /**
+     * 添加额外监听端口。
+     * 
+     * @param string $host
+     * @param int $port
+     * @return \LeePHP\Bootstrap
+     */
+    function addListener($host, $port) {
+        $this->_listeners[] = array(
+            $host, $port
+        );
+
         return $this;
     }
 

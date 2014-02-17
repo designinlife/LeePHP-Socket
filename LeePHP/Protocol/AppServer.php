@@ -4,6 +4,7 @@ namespace LeePHP\Protocol;
 use LeePHP\Interfaces\IProtocol;
 use LeePHP\Interfaces\ISwoole;
 use LeePHP\Interfaces\IController;
+use LeePHP\Interfaces\IAsyncTask;
 use LeePHP\Base\ServerBase;
 use LeePHP\Utility\Console;
 
@@ -116,10 +117,13 @@ class AppServer extends ServerBase implements IProtocol {
      * @param string $data
      */
     function onReceive($sw, $fd, $from_id, $data) {
+        // 读取客户端来源信息 ...
+        $client_info = $sw->connection_info($fd);
+
         // 解析客户端数据协议 ...
         $data_s = DataParser::decode($data);
 
-        Console::debug('[接收数据]', $data_s);
+        Console::debug('[OnReceive][Client IP: ', $client_info['remote_ip'], ', From: ', $client_info['from_port'], '] ', $data_s);
 
         if (!isset($this->ctx->cmds[$data_s['cmd']])) {
             Console::error('无效的命令编号(' . $data_s['cmd'] . ')。');
@@ -129,7 +133,7 @@ class AppServer extends ServerBase implements IProtocol {
         // 实例化 IController 控制器对象并执行命令方法 ...
         $cls_n = $this->ctx->getControllerNs() . '\\' . $this->ctx->cmds[$data_s['cmd']][0];
         $cls_m = $this->ctx->cmds[$data_s['cmd']][1];
-        $cls_o = new $cls_n($this->ctx, $sw, $fd, $this->ctx->cmds[$data_s['cmd']]);
+        $cls_o = new $cls_n($this->ctx, $sw, $fd, $client_info, $this->ctx->cmds[$data_s['cmd']]);
 
         if ($cls_o instanceof IController) {
             $cls_o->initialize();
@@ -157,7 +161,11 @@ class AppServer extends ServerBase implements IProtocol {
      * @param string $data
      */
     function onTask($sw, $task_id, $from_id, $data) {
-        
+        $task = unserialize($data);
+
+        if ($task instanceof IAsyncTask) {
+            $task->execute();
+        }
     }
 
     /**

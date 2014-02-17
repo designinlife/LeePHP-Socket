@@ -3,6 +3,7 @@ namespace LeePHP\Base;
 
 use LeePHP\Interfaces\ISwoole;
 use LeePHP\Interfaces\IController;
+use LeePHP\Interfaces\IAsyncTask;
 use LeePHP\Base\Base;
 use LeePHP\Bootstrap;
 use LeePHP\Protocol\DataParser;
@@ -31,6 +32,13 @@ class ControllerBase extends Base implements IController {
     protected $fd = 0;
 
     /**
+     * 当前客户端信息。
+     *
+     * @var array
+     */
+    protected $client_info;
+
+    /**
      * 当前控制器命令项。
      *
      * @var array
@@ -40,17 +48,19 @@ class ControllerBase extends Base implements IController {
     /**
      * 构造函数。
      * 
-     * @param Bootstrap $ctx  指定上下文对象。
-     * @param ISwoole $serv   指定 Swoole 服务实例。
-     * @param int $fd         指定客户端文件描述符。
-     * @param array $cmd_data 指定当前命令数据。
+     * @param Bootstrap $ctx     指定上下文对象。
+     * @param ISwoole $serv      指定 Swoole 服务实例。
+     * @param int $fd            指定客户端文件描述符。
+     * @param array $client_info 指定客户端来源信息。
+     * @param array $cmd_data    指定当前命令数据。
      */
-    function __construct($ctx, $serv, $fd, &$cmd_data) {
+    function __construct($ctx, $serv, $fd, $client_info, &$cmd_data) {
         parent::__construct($ctx);
 
-        $this->serv     = $serv;
-        $this->fd       = $fd;
-        $this->cmd_data = $cmd_data;
+        $this->serv        = $serv;
+        $this->fd          = $fd;
+        $this->cmd_data    = $cmd_data;
+        $this->client_info = $client_info;
     }
 
     /**
@@ -74,6 +84,18 @@ class ControllerBase extends Base implements IController {
      */
     function dispose() {
         
+    }
+
+    /**
+     * 添加 IAsyncTask 异步任务。
+     * 
+     * @param IAsyncTask $task 指定异步任务 IAsyncTask 对象。
+     * @return int             返回任务ID。
+     */
+    protected function addTask(IAsyncTask $task) {
+        $task_id = $this->serv->task(serialize($task));
+
+        return $task_id;
     }
 
     /**
