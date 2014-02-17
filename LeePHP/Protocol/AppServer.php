@@ -6,7 +6,6 @@ use LeePHP\Interfaces\ISwoole;
 use LeePHP\Interfaces\IController;
 use LeePHP\Base\ServerBase;
 use LeePHP\Utility\Console;
-use LeePHP\System\Application;
 
 /**
  * Socket 应用程序服务事件处理类。
@@ -117,6 +116,7 @@ class AppServer extends ServerBase implements IProtocol {
      * @param string $data
      */
     function onReceive($sw, $fd, $from_id, $data) {
+        // 解析客户端数据协议 ...
         $data_s = DataParser::decode($data);
 
         Console::debug('[接收数据]', $data_s);

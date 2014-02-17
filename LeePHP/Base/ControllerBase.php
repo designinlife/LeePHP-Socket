@@ -6,6 +6,7 @@ use LeePHP\Interfaces\IController;
 use LeePHP\Base\Base;
 use LeePHP\Bootstrap;
 use LeePHP\Protocol\DataParser;
+use LeePHP\ArgumentException;
 
 /**
  * 控制器基类。
@@ -76,12 +77,54 @@ class ControllerBase extends Base implements IController {
     }
 
     /**
+     * 全服广播消息。
+     * 
+     * @param array|string $data    指定广播消息字符串或数组。
+     * @param int $ci               指定模块编号。
+     * @param int $ct               指定协议下行编号。
+     * @param boolean $contain_self 指示是否包含自己？(默认值: True)
+     * @throws ArgumentException
+     */
+    protected function broadcast($data, $ci = 0, $ct = 0, $contain_self = true) {
+        if (!is_string($data)) {
+            if (0 == $ci || 0 == $ct) {
+                throw new ArgumentException('必须指定 $ci, $ct 参数!', -1);
+            }
+
+            $data_s = DataParser::std($ci, $ct, $data);
+        } else {
+            $data_s = &$data;
+        }
+
+        $start_fd = 0;
+        while (true) {
+            $conn_list = $this->serv->connection_list($start_fd, 10);
+            if ($conn_list === false) {
+                break;
+            }
+            $start_fd = end($conn_list);
+
+            foreach ($conn_list as $fd) {
+                if ($contain_self || (false === $contain_self && $fd != $this->fd))
+                    $this->serv->send($fd, $data_s);
+            }
+        }
+    }
+
+    /**
      * 发送数据给客户端。
      * 
      * @param array $data 指定数据集合。
+     * @param int $ci     指定模块编号。
+     * @param int $ct     指定协议下行编号。
      */
-    protected function send($data) {
-        $this->serv->send($this->fd, DataParser::std($this->cmd_data[2], $this->cmd_data[3], $data));
+    protected function send($data, $ci = 0, $ct = 0) {
+        if (0 == $ci)
+            $ci = $this->cmd_data[2];
+        if (0 == $ct)
+            $ct = $this->cmd_data[3];
+
+        $this->serv->send($this->fd, DataParser::std($ci, $ct, $data));
     }
 
     /**
