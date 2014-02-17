@@ -6,10 +6,9 @@ LeePHP-Socket 框架
 
 示例
 =============
-    运行启动命令: ./app
+    运行启动命令: /usr/bin/php app-server.php
 -------------
 ```php
-#!/usr/bin/php
 <?php
 define('LINE_DELIMITER', "\n");
 define('TAB_INDENT', "\t");
