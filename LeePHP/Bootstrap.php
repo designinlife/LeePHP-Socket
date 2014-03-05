@@ -6,14 +6,16 @@ define('LEE_PHP_ROOT_P', dirname(LEE_PHP_ROOT) . DIRECTORY_SEPARATOR);
 
 include (LEE_PHP_ROOT . 'Exceptions.php');
 
+use ErrorException;
+use Exception;
+use LeePHP\DB\DbPdo;
+use LeePHP\Interfaces\IDb;
 use LeePHP\Interfaces\IProtocol;
 use LeePHP\Interfaces\ISwoole;
 use LeePHP\Protocol\AppServer;
 use LeePHP\System\Application;
 use LeePHP\System\Logger;
-use LeePHP\DB\DbPdo;
 use LeePHP\Utility\Console;
-use LeePHP\Interfaces\IDb;
 
 /**
  * LeePHP 框架核心启动对象。
@@ -206,7 +208,7 @@ class Bootstrap {
      */
     function dispatch(&$argv, &$def_cnf) {
         if (0 != strcmp(PHP_SAPI, 'cli')) {
-            echo '此脚本仅支持 cli 模式运行!';
+            echo '此脚本仅支持 cli 模式运行!', PHP_EOL;
             exit(0);
         }
 
@@ -276,7 +278,7 @@ class Bootstrap {
     /**
      * 缺省异常处理函数。
      * 
-     * @param \Exception $ex
+     * @param Exception $ex
      */
     function defExceptionHandler($ex) {
         echo '(', $ex->getCode(), ') ', $ex->getMessage(), PHP_EOL, $ex->getTraceAsString(), PHP_EOL;
@@ -292,7 +294,7 @@ class Bootstrap {
      * @param int $errline
      */
     function defErrorHandler($errno, $errstr, $errfile, $errline) {
-        throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
+        throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
     }
 
     /**
@@ -308,7 +310,7 @@ class Bootstrap {
      * 设置控制器名称空间。
      * 
      * @param string $value
-     * @return \LeePHP\Bootstrap
+     * @return Bootstrap
      */
     function setControllerNs($value) {
         $this->_controll_ns = $value;
@@ -319,7 +321,7 @@ class Bootstrap {
      * 设置系统时区。
      * 
      * @param string $value
-     * @return \LeePHP\Bootstrap
+     * @return Bootstrap
      */
     function setTimeZone($value) {
         $this->_timeZone = $value;
@@ -330,7 +332,7 @@ class Bootstrap {
      * 设置系统错误报告级别。
      * 
      * @param int $value
-     * @return \LeePHP\Bootstrap
+     * @return Bootstrap
      */
     function setErrorLevel($value) {
         $this->_errorLevel = $value;
@@ -341,7 +343,7 @@ class Bootstrap {
      * 设置缺省控制器名称。
      * 
      * @param string $value
-     * @return \LeePHP\Bootstrap
+     * @return Bootstrap
      */
     function setDefaultControllerName($value) {
         $this->_defaultControllerName = $value;
@@ -361,7 +363,7 @@ class Bootstrap {
      * 设置日志级别。
      * 
      * @param int $value
-     * @return \LeePHP\Bootstrap
+     * @return Bootstrap
      */
     function setLogLevel($value) {
         $this->_logLevel = $value;
@@ -381,7 +383,7 @@ class Bootstrap {
      * 设置日志文件存储目录。
      * 
      * @param string $value
-     * @return \LeePHP\Bootstrap
+     * @return Bootstrap
      */
     function setLogDir($value) {
         $this->_logDir = $value;
@@ -392,7 +394,7 @@ class Bootstrap {
      * 设置 DEBUG 模式开启状态。
      * 
      * @param boolean $enable
-     * @return \LeePHP\Bootstrap
+     * @return Bootstrap
      */
     function setDebugEnable($enable) {
         $this->_debug_enable = $enable;
@@ -422,9 +424,9 @@ class Bootstrap {
      * 
      * @param string $host
      * @param int $port
-     * @return \LeePHP\Bootstrap
+     * @return Bootstrap
      */
-    function setListener($host, $port) {
+    function bind($host, $port) {
         $this->_host = $host;
         $this->_port = $port;
         return $this;
@@ -435,7 +437,7 @@ class Bootstrap {
      * 
      * @param string $host
      * @param int $port
-     * @return \LeePHP\Bootstrap
+     * @return Bootstrap
      */
     function addListener($host, $port) {
         $this->_listeners[] = array(
@@ -446,10 +448,19 @@ class Bootstrap {
     }
 
     /**
+     * 获取附加监听端口列表。
+     * 
+     * @return array
+     */
+    function getListeners() {
+        return $this->_listeners;
+    }
+
+    /**
      * 指示是否开启 DB 自动提交？(仅适用于 InnoDB 引擎)
      * 
      * @param boolean $enable
-     * @return \LeePHP\Bootstrap
+     * @return Bootstrap
      */
     function setDbAutoCommit($enable) {
         $this->_dbAutoCommit = $enable;
@@ -460,7 +471,7 @@ class Bootstrap {
      * 指示是否开启 DB 持久化连接？
      * 
      * @param boolean $enable
-     * @return \LeePHP\Bootstrap
+     * @return Bootstrap
      */
     function setDbPersistent($enable) {
         $this->_dbPersistent = $enable;
@@ -471,7 +482,7 @@ class Bootstrap {
      * 设置依赖的 Pecl 扩展名称列表。(注: 半角逗号分隔)
      * 
      * @param string $depends
-     * @return \LeePHP\Bootstrap
+     * @return Bootstrap
      */
     function setDepends($depends) {
         $this->_depends = $depends;

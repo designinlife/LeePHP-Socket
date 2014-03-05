@@ -26,6 +26,13 @@ class AppServer extends ServerBase implements IProtocol {
         Console::info('Swoole 内核版本: ', $this->ctx->app->core_version, ', LeePHP Socket 框架版本: ', $this->ctx->app->version);
         Console::info(str_repeat('-', 120));
         Console::info('Application 服务「主进程」已于 ' . date('Y-m-d H:i:s', $this->ctx->timestamp) . ' 启动。(' . $this->ctx->getListener() . ')');
+
+        $listeners = $this->ctx->getListeners();
+
+        if (!empty($listeners)) {
+            foreach ($listeners as $k => $v)
+                Console::info('Service Port [', $k + 1, '] -> ', $v[0], ':', $v[1]);
+        }
     }
 
     /**
@@ -120,6 +127,8 @@ class AppServer extends ServerBase implements IProtocol {
         // 读取客户端来源信息 ...
         $client_info = $sw->connection_info($fd);
 
+        Console::debug('[接收数据] ', $data);
+
         // 解析客户端数据协议 ...
         $data_s = DataParser::decode($data);
 
@@ -140,6 +149,8 @@ class AppServer extends ServerBase implements IProtocol {
             $cls_o->$cls_m($data_s);
             $cls_o->dispose();
         }
+
+        $cls_o = NULL;
     }
 
     /**

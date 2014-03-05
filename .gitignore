@@ -219,5 +219,6 @@ pip-log.txt
 nbproject/
 test*.php
 TroubledKit/
+TroubledWebKit/
 build.xml
 build-attrs.xml
